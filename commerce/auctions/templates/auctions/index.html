@@ -1,17 +1,20 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Active Listings</h2>
-
+    <h1>Active Listings:</h1>
     {% for listing in listings %}
-        <div class="listing">
-            <h2><a href="/">{{ listing.title }}</a></h2>
-            <h4>Price: </h4>
-            <p><a>{{ listing.description }}</a></p>
-            <p>By: {{ listing.user.username }}</p>
+        
+        <div class="listing-object">
+            <h2><a href="{% url 'view_listing' listing.id %}">{{ listing.listing_title }}</a></h2>
+            {% if listing.listing_image %}
+                <a href="{% url 'view_listing' listing.id %}"><img width="200" height="200" src="{{ listing.listing_image.url }}" ></a>
+            {% endif %}
+            <h3>Current bid: ${{ listing.listing_current_bid }}</h3>
+            <h4>Category: <a href="{% url 'view_category' listing.listing_category.category_name %}">{{ listing.listing_category }}</a></h4>
+            <p>Created {{ listing.listing_time }}</p>
         </div>
-        <br><br>
+        <br>
     {% empty %}
-        <h1>Sadly no listings have been made</h1>
+    Sadly no current listings are active at the moment. Please try again later.
     {% endfor %}
 {% endblock %}

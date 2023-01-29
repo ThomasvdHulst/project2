@@ -2,8 +2,22 @@ body {
     padding: 10px;
 }
 
-.listing {
-    border-style: groove;
+.form-field {
+    width: 400px;
+}
+
+.listing-object {
     text-align: center;
-    
+    border-style: groove;
+}
+
+.comment-object {
+    text-align: center;
+    width: 400px;
+    border-style: groove;
+}
+
+.listing-open {
+    border: 1px solid blue;
+    border-radius: 10px;
 }

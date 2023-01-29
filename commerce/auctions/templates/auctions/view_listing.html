@@ -1,0 +1,111 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+    {{ listing.listing_title }}
+{% endblock %}
+
+{% block body %}
+    <div>
+        <h1 style="display: inline">Listing: {{ listing.listing_title }}</h1>
+        &nbsp;
+
+        {% if listing.listing_open %}
+            {% if listing.listing_user == user %}
+                <form style="display: inline;" method="post" action="{% url 'close_listing' listing.id %}">
+                    {% csrf_token %}
+                    <input class="btn btn-primary" type="submit" value="Close Listing">
+                </form>
+            {% else %}
+                <h3 style="display:inline" class="listing-open">OPEN</h3>
+            {% endif %}
+        {% else %}
+            <h3 style="display:inline" class="listing-open">CLOSED</h3>
+        {% endif %}
+    </div>
+
+    <br>
+
+    {% if user.is_authenticated %}
+        <form method="post" action="{% url 'manage_watchlist' listing.id %}">
+            {% csrf_token %}
+            <input type="submit" class="btn btn-primary" value="{{ watchlist_message }}">
+        </form>
+    {% endif %}
+
+    {% if listing.listing_open == 0 and highest_bid.bid_user == request.user %}
+        <br>
+        <h2 style="color: green;">You have won this listing! Please contact the owner of this listing for further planning.</h2>
+    {% endif %}
+
+    <br>
+
+    {% if listing.listing_image %}
+    <a href="{% url 'view_listing' listing.id %}"><img width="400" height="400" src="{{ listing.listing_image.url }}" ></a>
+    {% endif %}
+
+    {% if listing.listing_open == 1 %}
+
+        <br>
+
+        {% if highest_bid %}
+            <h2>Current bid of ${{ highest_bid.bid_value }}</h2>
+        {% else %}
+            <h2>Starting bid of ${{ listing.listing_starting_bid }}</h2>
+        {% endif %}
+
+        <p>
+            {{ amount_bids }} bid(s) so far.
+            {% if highest_bid.bid_user == user %}
+                The current bid is your bid.
+            {% endif %}
+        </p>
+        {% if user.is_authenticated and user != listing.listing_user %}
+            <form method="post" action="{% url 'place_bid' listing.id %}">
+                {% csrf_token %}
+                <input name="bid" class="form-control" style="width:200px" type="number" min="{{ listing.listing_current_bid }}" required placeholder="Bid">
+                <br>
+                <input class="btn btn-primary" type="submit" value="Place Bid" >
+            </form>
+        {% elif not user.is_authenticated %}
+            <p>Log in to place bids on this listing.</p>
+        {% endif %}
+        <br>
+
+    {% endif %}
+
+    <h3>Specifics:</h3>
+    <ul>
+        <li>Description: {{ listing.listing_description }}</li>
+        <li>Category: <a href="{% url 'view_category' listing.listing_category.category_name %}">{{ listing.listing_category }}</a></li>
+        <li>Starting bid: ${{ listing.listing_starting_bid }}</li>
+        <li>Listed by: <a href="{% url 'watchlist' listing.listing_user.id %}">{{ listing.listing_user }}</a></li>
+        <li>Listed at: {{ listing.listing_time }}</li>
+    </ul>
+    
+
+    {% if listing.listing_open == 1 %}
+
+        <br><br>
+        <h3>Comments:</h3>
+        {% for comment in comments %}
+            <div class="comment-object">
+                <h5>{{ comment.comment_content }}</h5>
+                <p>By: <a href="{% url 'watchlist' comment.comment_user.id %}">{{ comment.comment_user }}</a></p>
+                <p>At: {{ comment.comment_date }}</p>
+            </div>
+            <br>
+        {% empty %}
+            <h5>No comments on this listing.</h5>
+        {% endfor %}
+
+        {% if user.is_authenticated %}
+            <form method="post" action="{% url 'place_comment' listing.id %}">
+                {% csrf_token %}
+                <textarea class="form-control form-field" name="comment" placeholder="Comment..." required></textarea>
+                <br>
+                <input class="btn btn-primary" type="submit" value="Place Comment">
+            </form>
+        {% endif %}
+
+    {% endif %}
+{% endblock %}   

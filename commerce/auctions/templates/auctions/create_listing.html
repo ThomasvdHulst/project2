@@ -1,0 +1,26 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<h1>Create New Listing:</h1>
+<form method="post" action="{% url 'create_listing' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+    <h6>Listing Title:</h6>
+    {{ form.listing_title }}
+    <br>
+    <h6>Listing Description:</h6>
+    {{ form.listing_description }}
+    <br>
+    <h6>Listing Image (optional):</h6>
+    {{ form.listing_image }}
+    <br><br>
+    <h6>Starting Bid:</h6>
+    {{ form.listing_starting_bid }}
+    <br>
+    <h6>Category:</h6>
+    {{ form.listing_category }}
+    <br>
+    <br>
+    <input class="btn btn-primary" type="submit" value="Create Listing">
+</form>
+
+{% endblock %}   

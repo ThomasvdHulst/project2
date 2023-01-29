@@ -1,0 +1,27 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+    Your active listings
+{% endblock %}
+
+{% block body %}
+
+<h1>All your active listings:</h1>
+
+<br>
+{% for listing in listings %}
+    <div class="listing-object">
+        <h1><a href="{% url 'view_listing' listing.id %}">{{ listing.listing_title }}</a></h1>
+        {% if listing.listing_image %}
+            <a href="{% url 'view_listing' listing.id %}"><img width="200" height="200" src="{{ listing.listing_image.url }}" ></a>
+        {% endif %}
+        <h3>Current bid: ${{ listing.listing_current_bid }}</h3>
+        <h4>Category: <a href="{% url 'view_category' listing.listing_category.category_name %}">{{ listing.listing_category }}</a></h4>
+        <p>Created {{ listing.listing_time }}</p>
+    </div>
+    <br>
+{% empty %}
+    <h3>You do not have any listings.</h3>
+{% endfor %}
+
+{% endblock %} 
